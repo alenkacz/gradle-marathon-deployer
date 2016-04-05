@@ -1,11 +1,11 @@
 package cz.alenkacz.gradle.marathon.deploy
 
-class MarathonDeployPluginExtension {
+class PluginExtension {
     def String marathonUrl
     def String dockerImageName
     def pathToMarathonJsonFile
 
-    public MarathonDeployPluginExtension() {
+    public PluginExtension() {
         pathToMarathonJsonFile = "deploy/marathon.json"
     }
 }

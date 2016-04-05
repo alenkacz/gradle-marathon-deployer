@@ -7,16 +7,18 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
-class MarathonDeployTaskTest extends Specification  {
-
-    def "deploy to Marathon"() {
+class DeployTaskTest extends Specification  {
+    def "fail because of incorrect path to json"() {
         given:
             def project = ProjectBuilder.builder().build()
             project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
+            ((PluginExtension) project.extensions.findByName('marathon'))
+                .setPathToMarathonJsonFile("non/existing/path.json")
         when:
-        project.tasks.deployToMarathon.deployToMarathon()
+            project.tasks.deployToMarathon.deployToMarathon()
 
         then:
-        noExceptionThrown()
+            Exception ex = thrown()
+            ex.message.toLowerCase().contains("non/existing/path.json")
     }
 }

@@ -11,7 +11,7 @@ class MarathonDeployPluginTest extends Specification {
         project.plugins.apply "cz.alenkacz.gradle.marathon.deploy"
 
         then:
-        project.tasks.deployToMarathon instanceof MarathonDeployTask
+        project.tasks.deployToMarathon instanceof DeployTask
     }
 
     def "add extension to the project"() {
@@ -20,6 +20,6 @@ class MarathonDeployPluginTest extends Specification {
         project.plugins.apply "cz.alenkacz.gradle.marathon.deploy"
 
         then:
-        project.extensions.findByName("marathon") instanceof MarathonDeployPluginExtension
+        project.extensions.findByName("marathon") instanceof PluginExtension
     }
 }
