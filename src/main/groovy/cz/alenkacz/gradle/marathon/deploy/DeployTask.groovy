@@ -13,22 +13,22 @@ class DeployTask extends DefaultTask {
     @TaskAction
     def deployToMarathon() {
         project.exec { execSpec ->
-            if (!pluginExtension.marathonUrl) {
-                throw new Exception("Missing required property marathonUrl")
+            if (!pluginExtension.url) {
+                throw new Exception("Missing required property marathon url")
             }
 
             if (!pluginExtension.dockerImageName) {
                 throw new Exception("Missing required property dockerImageName")
             }
 
-            if (!pluginExtension.pathToMarathonJsonFile || !new File(project.marathon.pathToMarathonJsonFile).exists()) {
-                throw new Exception("Invalid path to marathon json ${project.marathon.pathToMarathonJsonFile}")
+            if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
+                throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
             }
 
             ArrayList<Object> dockerRunCmd = []
-            dockerRunCmd.addAll(['docker', 'run', '-v', "${project.marathon.pathToMarathonJsonFile}:/marathon.json",
-                                 '-e', "MARATHON_URL=${project.marathon.marathonUrl}",
-                                 '-e', "DOCKER_IMAGE_NAME=${project.marathon.dockerImageName}"])
+            dockerRunCmd.addAll(['docker', 'run', '-v', "${pluginExtension.pathToJsonFile}:/marathon.json",
+                                 '-e', "MARATHON_URL=${pluginExtension.url}",
+                                 '-e', "DOCKER_IMAGE_NAME=${pluginExtension.dockerImageName}"])
 
             dockerRunCmd << 'avastsoftware/marathon-deployer:latest'
 

@@ -20,7 +20,7 @@ class DeployTaskTest extends Specification  {
 
         then:
         Exception ex = thrown()
-        ex.message.toLowerCase().contains("marathonurl")
+        ex.message.toLowerCase().contains("url")
     }
 
     def "fail because of missing docker image name"() {
@@ -28,7 +28,7 @@ class DeployTaskTest extends Specification  {
         def project = ProjectBuilder.builder().build()
         project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
         def extension = (PluginExtension) project.extensions.findByName('marathon')
-        extension.setMarathonUrl("http://marathon.url")
+        extension.setUrl("http://marathon.url")
 
         when:
         project.tasks.deployToMarathon.deployToMarathon()
@@ -43,9 +43,9 @@ class DeployTaskTest extends Specification  {
             def project = ProjectBuilder.builder().build()
             project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
             def extension = (PluginExtension) project.extensions.findByName('marathon')
-            extension.setPathToMarathonJsonFile("non/existing/path.json")
+            extension.setPathToJsonFile("non/existing/path.json")
             extension.setDockerImageName("imagename")
-            extension.setMarathonUrl("http://marathon.url")
+            extension.setUrl("http://marathon.url")
         when:
             project.tasks.deployToMarathon.deployToMarathon()
 
