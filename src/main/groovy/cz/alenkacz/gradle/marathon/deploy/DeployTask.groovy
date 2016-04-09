@@ -11,6 +11,14 @@ class DeployTask extends DefaultTask {
     @TaskAction
     def deployToMarathon() {
         project.exec { execSpec ->
+            if (!project.marathon.marathonUrl) {
+                throw new Exception("Missing required property marathonUrl")
+            }
+
+            if (!project.marathon.dockerImageName) {
+                throw new Exception("Missing required property dockerImageName")
+            }
+
             if (!project.marathon.pathToMarathonJsonFile || !new File(project.marathon.pathToMarathonJsonFile).exists()) {
                 throw new Exception("Invalid path to marathon json ${project.marathon.pathToMarathonJsonFile}")
             }
