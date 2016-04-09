@@ -5,7 +5,9 @@ import org.gradle.api.Plugin
 
 class MarathonDeployPlugin implements Plugin<Project> {
     void apply(Project target) {
-        target.task('deployToMarathon', type: DeployTask)
-        target.extensions.create('marathon', PluginExtension)
+        DeployTask deployTask = target.task('deployToMarathon', type: DeployTask)
+        PluginExtension extension = target.extensions.create('marathon', PluginExtension)
+
+        deployTask.pluginExtension = extension
     }
 }

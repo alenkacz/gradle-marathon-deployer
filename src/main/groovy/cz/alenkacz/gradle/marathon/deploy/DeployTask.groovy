@@ -4,6 +4,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class DeployTask extends DefaultTask {
+    def PluginExtension pluginExtension
+
     public DeployTask() {
         group = 'publishing'
         description = 'Deploys your application to Marathon'
@@ -11,15 +13,15 @@ class DeployTask extends DefaultTask {
     @TaskAction
     def deployToMarathon() {
         project.exec { execSpec ->
-            if (!project.marathon.marathonUrl) {
+            if (!pluginExtension.marathonUrl) {
                 throw new Exception("Missing required property marathonUrl")
             }
 
-            if (!project.marathon.dockerImageName) {
+            if (!pluginExtension.dockerImageName) {
                 throw new Exception("Missing required property dockerImageName")
             }
 
-            if (!project.marathon.pathToMarathonJsonFile || !new File(project.marathon.pathToMarathonJsonFile).exists()) {
+            if (!pluginExtension.pathToMarathonJsonFile || !new File(project.marathon.pathToMarathonJsonFile).exists()) {
                 throw new Exception("Invalid path to marathon json ${project.marathon.pathToMarathonJsonFile}")
             }
 
@@ -30,7 +32,7 @@ class DeployTask extends DefaultTask {
 
             dockerRunCmd << 'avastsoftware/marathon-deployer:latest'
 
-            execSpec.commandLine 'docker', 'pull', 'avastsoftware/marathon-deployer:latest'
+            execSpec.commandLine 'docker', 'pull', '-a', 'avastsoftware/marathon-deployer:latest'
 
             execSpec.commandLine dockerRunCmd.toArray()
         }
