@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+    }
+}
+
+group 'cz.alenkacz.gradle'
+version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.12"
+}
+
+dependencies {
+    compile gradleApi()
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile gradleTestKit()
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group:'org.codehaus.groovy'
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'gradle-marathon-deployer'
+        desc = 'Gradle plugin that will deploy your application to the Marathon cloud.'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/alenkacz/gradle-marathon-deployer.git'
+        websiteUrl = 'https://github.com/alenkacz/gradle-marathon-deployer'
+        issueTrackerUrl = 'https://github.com/alenkacz/gradle-marathon-deployer/issues'
+        labels = ['marathon', 'mesos', 'docker', 'deploy', 'cloud']
+        version {
+            name = project.version
+            vcsTag = project.version
+        }
+    }
+}
