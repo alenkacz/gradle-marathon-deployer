@@ -25,10 +25,12 @@ class DeployTask extends DefaultTask {
                 throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
             }
 
+            def marathonJsonAbsolutePath = file(pluginExtension.pathToMarathonJsonFile).absolutePath
             ArrayList<Object> dockerRunCmd = []
-            dockerRunCmd.addAll(['docker', 'run', '-v', "${pluginExtension.pathToJsonFile}:/marathon.json",
-                                 '-e', "MARATHON_URL=${pluginExtension.url}",
-                                 '-e', "DOCKER_IMAGE_NAME=${pluginExtension.dockerImageName}"])
+
+            dockerRunCmd.addAll(['docker', 'run', '-v', "$marathonJsonAbsolutePath:/marathon.json",
+                                 '-e', "MARATHON_URL=${project.marathon.marathonUrl}",
+                                 '-e', "DOCKER_IMAGE_NAME=${project.marathon.dockerImageName}"])
 
             dockerRunCmd << 'avastsoftware/marathon-deployer:latest'
 
