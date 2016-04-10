@@ -23,21 +23,6 @@ class DeployTaskTest extends Specification  {
         ex.message.toLowerCase().contains("url")
     }
 
-    def "fail because of missing docker image name"() {
-        given:
-        def project = ProjectBuilder.builder().build()
-        project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
-        def extension = (PluginExtension) project.extensions.findByName('marathon')
-        extension.setUrl("http://marathon.url")
-
-        when:
-        project.tasks.deployToMarathon.deployToMarathon()
-
-        then:
-        Exception ex = thrown()
-        ex.message.toLowerCase().contains("imagename")
-    }
-
     def "fail because of incorrect path to json"() {
         given:
             def project = ProjectBuilder.builder().build()

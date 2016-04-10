@@ -17,10 +17,6 @@ class DeployTask extends DefaultTask {
                 throw new Exception("Missing required property marathon url")
             }
 
-            if (!pluginExtension.dockerImageName) {
-                throw new Exception("Missing required property dockerImageName")
-            }
-
             if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
                 throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
             }
