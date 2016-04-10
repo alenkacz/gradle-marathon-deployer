@@ -25,7 +25,7 @@ class DeployTask extends DefaultTask {
                 throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
             }
 
-            def jsonAbsolutePath = file(pluginExtension.pathToJsonFile).absolutePath
+            def jsonAbsolutePath = new File(pluginExtension.pathToJsonFile).absolutePath
             ArrayList<Object> dockerRunCmd = []
 
             dockerRunCmd.addAll(['docker', 'run', '-v', "$jsonAbsolutePath:/marathon.json",
