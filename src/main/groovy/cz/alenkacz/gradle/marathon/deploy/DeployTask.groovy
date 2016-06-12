@@ -25,8 +25,11 @@ class DeployTask extends DefaultTask {
             ArrayList<Object> dockerRunCmd = []
 
             dockerRunCmd.addAll(['docker', 'run', '-v', "$jsonAbsolutePath:/marathon.json",
-                                 '-e', "MARATHON_URL=${pluginExtension.url}",
-                                 '-e', "DOCKER_IMAGE_NAME=${pluginExtension.dockerImageName}"])
+                                 '-e', "MARATHON_URL=${pluginExtension.url}"])
+
+            if (pluginExtension.dockerImageName) {
+                dockerRunCmd.addAll(['-e', "DOCKER_IMAGE_NAME=${pluginExtension.dockerImageName}"])
+            }
 
             dockerRunCmd << 'avastsoftware/marathon-deployer:latest'
 
