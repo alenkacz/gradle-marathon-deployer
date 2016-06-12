@@ -4,6 +4,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.3"
     }
 }
 
@@ -14,6 +15,7 @@ apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'docker-compose'
 
 repositories {
     jcenter()
@@ -21,6 +23,15 @@ repositories {
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+
+dockerCompose.isRequiredBy(test)
+dockerCompose {
+    useComposeFiles = ['docker-compose-test.yml']
+}
+
+test.doFirst {
+    dockerCompose.exposeAsEnvironment(test)
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = "2.12"
@@ -34,6 +45,7 @@ dependencies {
     testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
         exclude group:'org.codehaus.groovy'
     }
+    testCompile 'com.github.mohitsoni:marathon-client:0.4.2'
 }
 
 task sourcesJar(type: Jar) {

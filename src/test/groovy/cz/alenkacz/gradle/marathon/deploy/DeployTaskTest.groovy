@@ -1,11 +1,15 @@
 package cz.alenkacz.gradle.marathon.deploy
 
+import mesosphere.marathon.client.Marathon
+import mesosphere.marathon.client.MarathonClient
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
+
+import java.time.Instant
 
 class DeployTaskTest extends Specification  {
     def "fail because of missing marathon url"() {
@@ -37,5 +41,30 @@ class DeployTaskTest extends Specification  {
         then:
             Exception ex = thrown()
             ex.message.toLowerCase().contains("non/existing/path.json")
+    }
+
+    def "deploy application to Marathon"() {
+        given:
+        def project = ProjectBuilder.builder().build()
+        project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
+        def extension = (PluginExtension) project.extensions.findByName('marathon')
+        def marathonHost = System.getenv("MARATHON_HOST")
+        def marathonPort = System.getenv("MARATHON_TCP_8080")
+        def marathonUrl = "http://$marathonHost:$marathonPort"
+        extension.setUrl(marathonUrl)
+        extension.setPathToJsonFile("src/test/resources/marathon.json")
+
+        when:
+        project.tasks.deployToMarathon.deployToMarathon()
+
+        then:
+        noExceptionThrown()
+        applicationIsDeployed("testcontainer", marathonUrl)
+
+    }
+
+    private def applicationIsDeployed(String name, String marathonUrl) {
+        def marathon = MarathonClient.getInstance(marathonUrl)
+        marathon.getApp(name) // throws exception "Not Found (http status: 404)" when not exists
     }
 }
