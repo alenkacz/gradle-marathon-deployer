@@ -1,10 +1,6 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
-    }
+plugins {
+    id 'net.researchgate.release' version '2.4.0'
+    id 'com.jfrog.bintray' version '1.5'
 }
 
 group 'cz.alenkacz.gradle'
@@ -13,7 +9,6 @@ version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
-apply plugin: 'com.jfrog.bintray'
 
 repositories {
     jcenter()
