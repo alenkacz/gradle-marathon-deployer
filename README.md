@@ -19,8 +19,8 @@ Usage
 	apply plugin: 'cz.alenkacz.gradle.marathon.deploy'
     
     marathon {
-      url = "http://path-to-your-marathon-instance.com"
-  }
+    	url = "http://path-to-your-marathon-instance.com"
+    }
 
 Properties
 ====================
