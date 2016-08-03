@@ -1,10 +1,18 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.3"
+    }
+}
+
 plugins {
     id 'net.researchgate.release' version '2.4.0'
-    id 'com.jfrog.bintray' version '1.5'
-    id 'docker-compose' version '0.3.3'
+}
 
 group 'cz.alenkacz.gradle'
-version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
 
 apply plugin: 'groovy'
 apply plugin: 'java'
@@ -72,3 +80,5 @@ bintray {
         }
     }
 }
+
+afterReleaseBuild.dependsOn bintrayUpload
