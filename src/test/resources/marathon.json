@@ -1,7 +1,0 @@
-{
-  "id": "testcontainer",
-  "cpus": 1,
-  "mem": 128,
-  "instances": 1,
-  "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done"
-}
