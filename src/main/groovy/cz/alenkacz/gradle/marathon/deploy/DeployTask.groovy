@@ -63,6 +63,8 @@ class DeployTask extends DefaultTask {
     }
 
     private def int verifyDeploymentFinished(String marathonApiUrl, String applicationId) {
+        sleep(500) // to give some time for the deployment to be created
+
         def marathonDeploymentUrl = "$marathonApiUrl/deployments"
         def currentNumberOfDeployments = 666
         def startTime = new Date()
