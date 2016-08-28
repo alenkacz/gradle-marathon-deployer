@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
 class DeployTask extends DefaultTask {
-    def PluginExtension pluginExtension
-    def AsyncHttpClient asyncHttpClient
-    def JsonSlurper jsonSlurper
+    private def PluginExtension pluginExtension
+    private def AsyncHttpClient asyncHttpClient
+    private def JsonSlurper jsonSlurper
 
     public DeployTask() {
         group = 'publishing'
@@ -30,16 +30,12 @@ class DeployTask extends DefaultTask {
             throw new Exception("Missing required property marathon url")
         }
 
-        if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
-            throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
-        }
-
         def marathonApiUrl = "${pluginExtension.url}/v2"
-        def parsedJson = jsonSlurper.parse(new File(pluginExtension.pathToJsonFile))
-        def String applicationId = parsedJson.id
-        def marathonJson = getFinalMarathonJson(parsedJson)
+        def marathonJsonEnvelope = new MarathonJsonEnvelope(pluginExtension)
+        def String applicationId = marathonJsonEnvelope.getApplicationId()
+        def String marathonJson = marathonJsonEnvelope.getFinalJson()
         try {
-            def result = asyncHttpClient.preparePut("${marathonApiUrl}/apps/${java.net.URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}").setBody(marathonJson).execute().get(pluginExtension.deploymentRequestTimeout.toMilliseconds(), TimeUnit.MILLISECONDS)
+            def result = asyncHttpClient.preparePut("${marathonApiUrl}/apps/${URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}").setBody(marathonJson).execute().get(pluginExtension.deploymentRequestTimeout.toMilliseconds(), TimeUnit.MILLISECONDS)
             if (result.statusCode != 200 && result.statusCode != 201) {
                 throw new MarathonDeployerException("Marathon responded with code ${result.statusCode} when requesting deployment. Response: ${result.getResponseBody(StandardCharsets.UTF_8)}")
             }
@@ -55,13 +51,6 @@ class DeployTask extends DefaultTask {
         }
     }
 
-    Object getFinalMarathonJson(Object parsedJson) {
-        if (pluginExtension.dockerImageName) {
-            parsedJson.container.docker.image = pluginExtension.dockerImageName
-        }
-        return JsonOutput.toJson(parsedJson)
-    }
-
     private def int verifyDeploymentFinished(String marathonApiUrl, String applicationId) {
         sleep(500) // to give some time for the deployment to be created
 
@@ -71,7 +60,7 @@ class DeployTask extends DefaultTask {
         while (currentNumberOfDeployments > 0 && !timedOut(pluginExtension.verificationTimeout, startTime, new Date())) {
             try {
                 currentNumberOfDeployments = getNumberOfDeployments(marathonDeploymentUrl, applicationId)
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 // intentionally nothing
                 logger.warn("Unable to receive deployment information when validating deployment")
             }
@@ -81,7 +70,7 @@ class DeployTask extends DefaultTask {
         return currentNumberOfDeployments
     }
 
-    boolean timedOut(TimeDuration limit, Date startTime, Date currentTime) {
+    static boolean timedOut(TimeDuration limit, Date startTime, Date currentTime) {
         TimeCategory.minus(currentTime, startTime) > limit
     }
 
