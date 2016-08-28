@@ -11,7 +11,7 @@ class PluginExtension {
 
     public PluginExtension() {
         pathToJsonFile = "deploy/marathon.json"
-        verificationTimeout = new TimeDuration(0, 0, 30, 0)
+        verificationTimeout = new TimeDuration(0, 0, 90, 0)
         deploymentRequestTimeout = new TimeDuration(0, 0, 5, 0)
     }
 }

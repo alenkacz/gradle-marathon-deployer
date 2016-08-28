@@ -93,6 +93,6 @@ class DeployTaskTest extends Specification {
         Exception ex = thrown()
         ex in MarathonDeployerException
         ex.printStackTrace()
-        ex.message.toLowerCase().contains("unable to verify deployment")
+        ex.message.toLowerCase().contains("application deployment did not finish")
     }
 }

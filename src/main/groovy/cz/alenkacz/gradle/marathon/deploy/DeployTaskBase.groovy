@@ -44,7 +44,7 @@ class DeployTaskBase extends DefaultTask  {
 
         def int notFinishedDeploymentsCount = verifyDeploymentFinished(marathonApiUrl, applicationId)
         if (notFinishedDeploymentsCount > 0) {
-            throw new MarathonDeployerException("Unable to verify deployment. There are still $notFinishedDeploymentsCount deployments of this application not finished")
+            throw new MarathonDeployerException("The application deployment did not finish in the defined timeout. There are still $notFinishedDeploymentsCount deployment(s) of this application in progress.")
         } else {
             println("Deployment was successful")
         }
