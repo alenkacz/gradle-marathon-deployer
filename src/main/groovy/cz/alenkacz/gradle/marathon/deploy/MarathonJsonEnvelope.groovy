@@ -4,7 +4,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 class MarathonJsonEnvelope {
-    private def Object parsedJson
+    protected def Object parsedJson
     private PluginExtension pluginExtension
 
     public MarathonJsonEnvelope(PluginExtension pluginExtension) {
