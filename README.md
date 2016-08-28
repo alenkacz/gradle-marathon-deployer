@@ -29,3 +29,10 @@ Properties
 - *pathToJson* (OPTIONAL) - project relative path to your json file, default is *deploy/marathon.json*
 - *verificationTimeout* (OPTIONAL) - timeout when querying Marathon to verify that there are no pending deployments left, default is 90 seconds
 - *deploymentRequestTimeout* (OPTIONAL) - timeout for the initial deployment request, default is 5 seconds
+
+Tasks
+====================
+Tasks are added under the publishing group in yous gradle project.
+
+- *deployToMarathon* - deploys your application to Marathon
+- *deployCanaryToMarathon* - canary deployment on top of Marathon. Creates new application id (just the original application id with postfix "-canary") and pushes that to Marathon in one instance. Read more about [canary deployment](http://martinfowler.com/bliki/CanaryRelease.html)
