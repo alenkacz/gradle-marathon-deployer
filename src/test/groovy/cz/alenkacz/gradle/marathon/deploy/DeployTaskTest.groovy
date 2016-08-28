@@ -12,7 +12,7 @@ import spock.lang.Specification
 
 import java.time.Instant
 
-class DeployTaskTest extends Specification  {
+class DeployTaskTest extends Specification {
     def "fail because of missing marathon url"() {
         given:
         def project = ProjectBuilder.builder().build()
@@ -49,16 +49,16 @@ class DeployTaskTest extends Specification  {
         def project = ProjectBuilder.builder().build()
         project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
         def extension = (PluginExtension) project.extensions.findByName('marathon')
-        def marathonUrl = getMarathonUrl()
+        def marathonUrl = MarathonMother.getMarathonUrl()
         extension.setUrl(marathonUrl)
-        extension.setPathToJsonFile(validMarathonJsonPath())
+        extension.setPathToJsonFile(MarathonJsonMother.validMarathonJsonPath())
 
         when:
         project.tasks.deployToMarathon.deployToMarathon()
 
         then:
         noExceptionThrown()
-        applicationIsDeployed("testcontainer", marathonUrl)
+        MarathonMother.applicationIsDeployed("testcontainer", marathonUrl)
     }
 
     def "fail when incorrect marathon url provided"() {
@@ -67,7 +67,7 @@ class DeployTaskTest extends Specification  {
         project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
         def extension = (PluginExtension) project.extensions.findByName('marathon')
         extension.setUrl("http://nonexistingmarathonurl")
-        extension.setPathToJsonFile(validMarathonJsonPath())
+        extension.setPathToJsonFile(MarathonJsonMother.validMarathonJsonPath())
 
         when:
         project.tasks.deployToMarathon.deployToMarathon()
@@ -82,8 +82,8 @@ class DeployTaskTest extends Specification  {
         def project = ProjectBuilder.builder().build()
         project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
         def extension = (PluginExtension) project.extensions.findByName('marathon')
-        extension.setUrl(getMarathonUrl())
-        extension.setPathToJsonFile(invalidMarathonJsonPath())
+        extension.setUrl(MarathonMother.getMarathonUrl())
+        extension.setPathToJsonFile(MarathonJsonMother.invalidMarathonJsonPath())
         extension.verificationTimeout = new TimeDuration(0, 0, 5, 0)
 
         when:
@@ -94,55 +94,5 @@ class DeployTaskTest extends Specification  {
         ex in MarathonDeployerException
         ex.printStackTrace()
         ex.message.toLowerCase().contains("application deployment did not finish")
-    }
-
-    private def String getMarathonUrl() {
-        def marathonHost = System.getenv("MARATHON_HOST")
-        def marathonPort = System.getenv("MARATHON_TCP_8080")
-        return "http://$marathonHost:$marathonPort"
-    }
-
-    private def applicationIsDeployed(String name, String marathonUrl) {
-        def marathon = MarathonClient.getInstance(marathonUrl)
-        marathon.getApp(name) // throws exception "Not Found (http status: 404)" when not exists
-    }
-
-    private def validMarathonJsonPath() {
-        def marathonFilePath = ""
-        File.createTempFile("marathon",".json").with {
-            deleteOnExit()
-
-            write """{
-  "id": "testcontainer",
-  "cpus": 1,
-  "mem": 128,
-  "instances": 1,
-  "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done"
-}"""
-            marathonFilePath = absolutePath
-        }
-        return marathonFilePath
-    }
-
-    private def invalidMarathonJsonPath() {
-        def marathonFilePath = ""
-        File.createTempFile("marathon",".json").with {
-            deleteOnExit()
-
-            write """{
-  "id": "testcontainerinvalid",
-  "cpus": 1,
-  "mem": 128,
-  "instances": 1,
-  "container": {
-        "type": "DOCKER",
-        "docker": {
-            "image": "nonexisting/image"
-        }
-   }
-}"""
-            marathonFilePath = absolutePath
-        }
-        return marathonFilePath
     }
 }

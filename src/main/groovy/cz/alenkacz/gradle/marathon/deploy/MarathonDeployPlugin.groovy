@@ -6,8 +6,10 @@ import org.gradle.api.Plugin
 class MarathonDeployPlugin implements Plugin<Project> {
     void apply(Project target) {
         DeployTask deployTask = target.task('deployToMarathon', type: DeployTask)
+        CanaryDeployTask canaryDeployTask = target.task('deployCanaryToMarathon', type: CanaryDeployTask)
         PluginExtension extension = target.extensions.create('marathon', PluginExtension)
 
         deployTask.pluginExtension = extension
+        canaryDeployTask.pluginExtension = extension
     }
 }
