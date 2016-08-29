@@ -34,7 +34,7 @@ class DeployTaskBase extends DefaultTask  {
         def String applicationId = marathonJsonEnvelope.getApplicationId()
         def String marathonJson = marathonJsonEnvelope.getFinalJson()
         try {
-            def result = asyncHttpClient.preparePut("${marathonApiUrl}/apps/${URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}").setBody(marathonJson).execute().get(pluginExtension.deploymentRequestTimeout.toMilliseconds(), TimeUnit.MILLISECONDS)
+            def result = asyncHttpClient.preparePut(prepareMarathonDeployUrl(marathonApiUrl, applicationId)).setBody(marathonJson).execute().get(pluginExtension.deploymentRequestTimeout.toMilliseconds(), TimeUnit.MILLISECONDS)
             if (result.statusCode != 200 && result.statusCode != 201) {
                 throw new MarathonDeployerException("Marathon responded with code ${result.statusCode} when requesting deployment. Response: ${result.getResponseBody(StandardCharsets.UTF_8)}")
             }
@@ -48,6 +48,10 @@ class DeployTaskBase extends DefaultTask  {
         } else {
             println("Deployment was successful")
         }
+    }
+
+    private String prepareMarathonDeployUrl(String marathonApiUrl, String applicationId) {
+        "${marathonApiUrl}/apps/${URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}${pluginExtension.forceDeployment ? "?force=true" : ""}"
     }
 
     private def int verifyDeploymentFinished(String marathonApiUrl, String applicationId) {

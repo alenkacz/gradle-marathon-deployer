@@ -8,6 +8,7 @@ class PluginExtension {
     def String pathToJsonFile
     def TimeDuration verificationTimeout
     def TimeDuration deploymentRequestTimeout
+    def Boolean forceDeployment
 
     public PluginExtension() {
         pathToJsonFile = "deploy/marathon.json"

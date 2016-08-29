@@ -61,6 +61,24 @@ class DeployTaskTest extends Specification {
         MarathonMother.applicationIsDeployed("testcontainer", marathonUrl)
     }
 
+    def "deploy application to Marathon with force"() {
+        given:
+        def project = ProjectBuilder.builder().build()
+        project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
+        def extension = (PluginExtension) project.extensions.findByName('marathon')
+        def marathonUrl = MarathonMother.getMarathonUrl()
+        extension.setUrl(marathonUrl)
+        extension.setForceDeployment(true)
+        extension.setPathToJsonFile(MarathonJsonMother.validMarathonJsonPath())
+
+        when:
+        project.tasks.deployToMarathon.deployToMarathon()
+
+        then:
+        noExceptionThrown()
+        MarathonMother.applicationIsDeployed("testcontainer", marathonUrl)
+    }
+
     def "fail when incorrect marathon url provided"() {
         given:
         def project = ProjectBuilder.builder().build()
