@@ -26,7 +26,7 @@ Properties
 ====================
 - *url* - url to your marathon application
 - *dockerImageName* (OPTIONAL) - full image name that will be provided to marathon, use this only if you want to override the image name provided in your json (e.g. you want to deploy a testing version as a part of your CI/CD pipeline)
-- *pathToJson* (OPTIONAL) - project relative path to your json file, default is *deploy/marathon.json*
+- *pathToJsonFile* (OPTIONAL) - project relative path to your json file, default is *deploy/marathon.json*
 - *verificationTimeout* (OPTIONAL) - timeout when querying Marathon to verify that there are no pending deployments left, default is 90 seconds
 - *deploymentRequestTimeout* (OPTIONAL) - timeout for the initial deployment request, default is 5 seconds
 
