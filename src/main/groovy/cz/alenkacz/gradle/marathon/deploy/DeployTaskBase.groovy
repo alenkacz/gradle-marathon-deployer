@@ -1,7 +1,6 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 import groovy.json.JsonSlurper
-import groovy.time.TimeCategory
 import groovy.time.TimeDuration
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
@@ -33,18 +32,24 @@ class DeployTaskBase extends DefaultTask  {
         def marathonJsonEnvelope = marathonJsonFactory(pluginExtension)
         def String applicationId = marathonJsonEnvelope.getApplicationId()
         def String marathonJson = marathonJsonEnvelope.getFinalJson()
+        def String deploymentId
+        def eventStream = new FinishedDeploymentVerifier(asyncHttpClient, jsonSlurper, marathonApiUrl, logger)
+        // we need to start capturing deployments before making actual deployment request
+        // if we have started reading the stream after the request, there might be a race condition of the deployment finishing before us attaching
+        eventStream.startCapturingFinishedDeployments()
+
         try {
             def result = asyncHttpClient.preparePut(prepareMarathonDeployUrl(marathonApiUrl, applicationId)).setBody(marathonJson).execute().get(pluginExtension.deploymentRequestTimeout.toMilliseconds(), TimeUnit.MILLISECONDS)
             if (result.statusCode != 200 && result.statusCode != 201) {
                 throw new MarathonDeployerException("Marathon responded with code ${result.statusCode} when requesting deployment. Response: ${result.getResponseBody(StandardCharsets.UTF_8)}")
             }
+            deploymentId = jsonSlurper.parse(result.getResponseBodyAsBytes()).deploymentId
         } catch (Exception e) {
             throw new MarathonDeployerException("Error when requesting to deploy application to Marathon", e)
         }
 
-        def int notFinishedDeploymentsCount = verifyDeploymentFinished(marathonApiUrl, applicationId)
-        if (notFinishedDeploymentsCount > 0) {
-            throw new MarathonDeployerException("The application deployment did not finish in the defined timeout. There are still $notFinishedDeploymentsCount deployment(s) of this application in progress.")
+        if (!eventStream.isDeploymentFinished(deploymentId, new TimeDuration(0, 0, 30, 0))) {
+            throw new MarathonDeployerException("The application deployment did not finish in the defined timeout. Deployment_success event for the initiated deployment did not appear in the event stream.")
         } else {
             println("Deployment was successful")
         }
@@ -52,37 +57,6 @@ class DeployTaskBase extends DefaultTask  {
 
     private String prepareMarathonDeployUrl(String marathonApiUrl, String applicationId) {
         "${marathonApiUrl}/apps/${URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}${pluginExtension.forceDeployment ? "?force=true" : ""}"
-    }
-
-    private def int verifyDeploymentFinished(String marathonApiUrl, String applicationId) {
-        sleep(500) // to give some time for the deployment to be created
-
-        def marathonDeploymentUrl = "$marathonApiUrl/deployments"
-        def currentNumberOfDeployments = 666
-        def startTime = new Date()
-        while (currentNumberOfDeployments > 0 && !timedOut(pluginExtension.verificationTimeout, startTime, new Date())) {
-            try {
-                currentNumberOfDeployments = getNumberOfDeployments(marathonDeploymentUrl, applicationId)
-            } catch (Exception ignored) {
-                // intentionally nothing
-                logger.warn("Unable to receive deployment information when validating deployment")
-            }
-            logger.debug("Number of deployments after verification: $currentNumberOfDeployments")
-            sleep(500)
-        }
-        return currentNumberOfDeployments
-    }
-
-    static boolean timedOut(TimeDuration limit, Date startTime, Date currentTime) {
-        TimeCategory.minus(currentTime, startTime) > limit
-    }
-
-    private int getNumberOfDeployments(String marathonDeploymentUrl, String applicationId) {
-        def deploymentCount = 0
-        def result = asyncHttpClient.prepareGet(marathonDeploymentUrl).execute().get(3, TimeUnit.SECONDS)
-        def parsedDeployments = jsonSlurper.parse(result.getResponseBodyAsBytes())
-        parsedDeployments.each { it.affectedApps.each { app -> if (app == "/$applicationId") { deploymentCount++ } } }
-        return deploymentCount
     }
 }
 
