@@ -1,10 +1,14 @@
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
         classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.8"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.5"
     }
 }
 
@@ -19,6 +23,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'docker-compose'
+apply plugin: "com.gradle.plugin-publish"
 
 repositories {
     jcenter()
@@ -78,6 +83,20 @@ bintray {
         version {
             name = project.version
             vcsTag = project.version
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/alenkacz/gradle-marathon-deployer'
+    vcsUrl = 'https://github.com/alenkacz/gradle-marathon-deployer'
+    description = 'Gradle plugin that can deploy your application to Marathon'
+    tags = ['marathon', 'deploy']
+
+    plugins {
+        marathonPlugin {
+            id = 'cz.alenkacz.gradle.marathon.deploy'
+            displayName = 'Gradle Marathon Deploy plugin'
         }
     }
 }
