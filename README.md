@@ -4,6 +4,10 @@
 
 Gradle plugin that can deploy your application to Marathon (https://mesosphere.github.io/marathon/).
 
+Apart from deploying your application to Marathon it also verifies, that the deployment is actually finished by querying the Marathon event stream.
+
+If you want to deploy your application using canary deployments, *deployCanaryToMarathon* task takes the marathon.json and deploys it under the same name, just with "-canary" as a suffix. Thanks to this, you can have both old and new version deployed in parallel.
+
 Usage
 ====================
 
