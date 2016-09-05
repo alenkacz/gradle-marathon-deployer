@@ -12,7 +12,7 @@ Usage
 			jcenter()
 		}
 		dependencies {
-			classpath 'cz.alenkacz.gradle:gradle-marathon-deployer:1.2.0'
+			classpath 'cz.alenkacz.gradle:gradle-marathon-deployer:1.2.3'
 		}
 	}
 
