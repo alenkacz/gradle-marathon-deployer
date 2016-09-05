@@ -44,6 +44,7 @@ class DeployTaskBase extends DefaultTask  {
                 throw new MarathonDeployerException("Marathon responded with code ${result.statusCode} when requesting deployment. Response: ${result.getResponseBody(StandardCharsets.UTF_8)}")
             }
             deploymentId = jsonSlurper.parse(result.getResponseBodyAsBytes()).deploymentId
+            logger.info("Initiated deployment of id $deploymentId")
         } catch (Exception e) {
             throw new MarathonDeployerException("Error when requesting to deploy application to Marathon", e)
         }
