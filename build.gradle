@@ -35,6 +35,7 @@ targetCompatibility = '1.8'
 dockerCompose.isRequiredBy(test)
 dockerCompose {
     useComposeFiles = ['docker-compose-test.yml']
+    waitForTcpPortsTimeout = java.time.Duration.ofMinutes(1)
 }
 
 test.doFirst {
