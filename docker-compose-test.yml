@@ -4,7 +4,7 @@ services:
   zookeeper:
     image: jplock/zookeeper
   marathon:
-    image: mesosphere/marathon
+    image: mesosphere/marathon:v1.4.0
     command:
       --master local --zk zk://zookeeper:2181/marathon
     links:
