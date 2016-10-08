@@ -16,6 +16,8 @@ before_install:
   - docker build --tag=build-image .
 
 script:
+  - docker ps
+  - docker ps -a
   - docker run -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock build-image test --info
 
 after_success:
