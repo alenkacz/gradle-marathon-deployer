@@ -46,7 +46,7 @@ class FinishedDeploymentVerifier {
                         finishedDeployments.put(foundDeploymentId, true)
                         logger.debug("New finished deployment of id $foundDeploymentId")
                     } catch (JsonException e) {
-                        logger.warn("Unexpected format of event in Marathon event stream: $receivedEvent")
+                        logger.warn("Unexpected format of event in Marathon event stream: $receivedEvent", e)
                     }
                 }
                 logger.debug("Received new event from Marathon event stream, but it was not interesting one for deployment verification")
