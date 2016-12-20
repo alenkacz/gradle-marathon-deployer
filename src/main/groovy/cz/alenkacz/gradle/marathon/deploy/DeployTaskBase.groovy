@@ -39,7 +39,7 @@ class DeployTaskBase extends DefaultTask  {
         def String applicationId = marathonJsonEnvelope.getApplicationId()
         def String marathonJson = marathonJsonEnvelope.getFinalJson()
         def String deploymentId
-        def eventStream = new FinishedDeploymentVerifier(client, asyncHttpClient, jsonSlurper, marathonApiUrl, logger)
+        def eventStream = new FinishedDeploymentVerifier(client, jsonSlurper, marathonApiUrl, logger)
         // we need to start capturing deployments before making actual deployment request
         // if we have started reading the stream after the request, there might be a race condition of the deployment finishing before us attaching
         eventStream.startCapturingFinishedDeployments()

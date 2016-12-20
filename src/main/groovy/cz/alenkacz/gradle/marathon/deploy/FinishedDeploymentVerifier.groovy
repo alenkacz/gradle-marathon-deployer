@@ -17,7 +17,6 @@ import javax.ws.rs.client.WebTarget
 import java.util.concurrent.ConcurrentHashMap
 
 class FinishedDeploymentVerifier {
-    private AsyncHttpClient asyncHttpClient
     private String marathonApiUrl
     private Logger logger
     private JsonSlurper jsonSlurper
@@ -26,12 +25,11 @@ class FinishedDeploymentVerifier {
     private EventSource eventSource
     private Client client
 
-    public FinishedDeploymentVerifier(Client client, AsyncHttpClient asyncHttpClient, JsonSlurper jsonSlurper, String marathonApiUrl, Logger logger) {
+    public FinishedDeploymentVerifier(Client client, JsonSlurper jsonSlurper, String marathonApiUrl, Logger logger) {
         this.client = client
         this.jsonSlurper = jsonSlurper
         this.logger = logger
         this.marathonApiUrl = marathonApiUrl
-        this.asyncHttpClient = asyncHttpClient
         this.finishedDeployments = new ConcurrentHashMap<>()
     }
 
