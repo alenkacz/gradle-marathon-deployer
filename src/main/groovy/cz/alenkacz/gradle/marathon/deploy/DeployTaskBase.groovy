@@ -4,15 +4,19 @@ import groovy.json.JsonSlurper
 import groovy.time.TimeDuration
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
+import org.glassfish.jersey.media.sse.SseFeature
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
+import javax.ws.rs.client.Client
+import javax.ws.rs.client.ClientBuilder
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
 class DeployTaskBase extends DefaultTask  {
     def PluginExtension pluginExtension
     private def AsyncHttpClient asyncHttpClient
+    private def Client client
     private def JsonSlurper jsonSlurper
     private Closure<MarathonJsonEnvelope> marathonJsonFactory
 
@@ -20,6 +24,8 @@ class DeployTaskBase extends DefaultTask  {
         this.marathonJsonFactory = marathonJsonFactory
         asyncHttpClient = new DefaultAsyncHttpClient()
         jsonSlurper = new JsonSlurper()
+        client = ClientBuilder.newBuilder()
+                .register(SseFeature.class).build()
     }
 
     @TaskAction
@@ -33,7 +39,7 @@ class DeployTaskBase extends DefaultTask  {
         def String applicationId = marathonJsonEnvelope.getApplicationId()
         def String marathonJson = marathonJsonEnvelope.getFinalJson()
         def String deploymentId
-        def eventStream = new FinishedDeploymentVerifier(asyncHttpClient, jsonSlurper, marathonApiUrl, logger)
+        def eventStream = new FinishedDeploymentVerifier(client, jsonSlurper, marathonApiUrl, logger)
         // we need to start capturing deployments before making actual deployment request
         // if we have started reading the stream after the request, there might be a race condition of the deployment finishing before us attaching
         eventStream.startCapturingFinishedDeployments()
