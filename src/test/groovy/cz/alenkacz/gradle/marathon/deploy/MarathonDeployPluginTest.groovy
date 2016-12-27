@@ -14,6 +14,15 @@ class MarathonDeployPluginTest extends Specification {
         project.tasks.deployToMarathon instanceof DeployTask
     }
 
+    def "support also short name of the plugin"() {
+        when:
+        Project project = ProjectBuilder.builder().build()
+        project.plugins.apply "marathon-deploy"
+
+        then:
+        project.tasks.deployToMarathon instanceof DeployTask
+    }
+
     def "add canary deploy task to the project"() {
         when:
         Project project = ProjectBuilder.builder().build()
