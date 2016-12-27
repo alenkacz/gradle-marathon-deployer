@@ -20,7 +20,7 @@ Usage
 		}
 	}
 
-	apply plugin: 'cz.alenkacz.gradle.marathon.deploy'
+	apply plugin: 'marathon-deploy'
     
     marathon {
     	url = "http://path-to-your-marathon-instance.com"
