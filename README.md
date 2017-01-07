@@ -33,6 +33,7 @@ Properties
 - *pathToJsonFile* (OPTIONAL) - project relative path to your json file, default is *deploy/marathon.json*
 - *verificationTimeout* (OPTIONAL) - timeout when querying Marathon to verify that there are no pending deployments left, default is 90 seconds
 - *deploymentRequestTimeout* (OPTIONAL) - timeout for the initial deployment request, default is 5 seconds
+- *jvmOverhead* (OPTIONAL) - number of MBs that the container needs on top of JVM app memory (default is 200)
 
 Tasks
 ====================
@@ -40,3 +41,17 @@ Tasks are added under the publishing group in yous gradle project.
 
 - *deployToMarathon* - deploys your application to Marathon
 - *deployCanaryToMarathon* - canary deployment on top of Marathon. Creates new application id (just the original application id with postfix "-canary") and pushes that to Marathon in one instance. Read more about [canary deployment](http://martinfowler.com/bliki/CanaryRelease.html)
+
+JVM support
+====================
+Running JVM apps in containers can be sometimes painful because of its extensive memory demand. To make it easier for JVM developers, marathon json can be enriched by property *jvmMem* that will contain number of megabytes your JVM app needs. Memory of the whole container will then be altered to reflect the constant overhead of the JVM itself so that your container does not go out of memory.
+
+If you want to start using this feature, just add a jvmMem property on the top level of your marathon json as in the following example:
+
+	{
+        "id": "/product/service/myApp",
+        "jvmMem": 256
+        ... other marathon json properties
+    }
+
+For this to work, when starting your JVM app, it must pass JAVA_OPTS environment variable to the JVM.
