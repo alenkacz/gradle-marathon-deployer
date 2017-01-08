@@ -1,6 +1,7 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 import groovy.json.JsonSlurper
+import org.gradle.testfixtures.ProjectBuilder
 import spock.lang.Specification
 
 class MarathonJsonEnvelopeTest extends Specification {
@@ -12,7 +13,7 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension)
+        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
         def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
 
         then:
@@ -27,7 +28,7 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension)
+        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
         def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
 
         then:
@@ -42,7 +43,7 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension)
+        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
         def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
 
         then:

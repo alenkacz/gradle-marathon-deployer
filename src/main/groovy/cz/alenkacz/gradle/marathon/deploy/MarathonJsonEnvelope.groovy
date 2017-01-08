@@ -3,12 +3,15 @@ package cz.alenkacz.gradle.marathon.deploy
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
+import org.gradle.api.logging.Logger
 
 class MarathonJsonEnvelope {
     protected def Object parsedJson
     private PluginExtension pluginExtension
+    private Logger logger
 
-    public MarathonJsonEnvelope(PluginExtension pluginExtension) {
+    public MarathonJsonEnvelope(PluginExtension pluginExtension, Logger logger) {
+        this.logger = logger
         this.pluginExtension = pluginExtension
         if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
             throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
@@ -24,10 +27,13 @@ class MarathonJsonEnvelope {
 
     String getFinalJson() {
         if (pluginExtension.dockerImageName) {
+            logger.info("Rewriting container.docker.image property to ${pluginExtension.dockerImageName}")
             parsedJson.container.docker.image = pluginExtension.dockerImageName
         }
         if (parsedJson.jvmMem != null) {
             parsedJson.mem = parsedJson.jvmMem + pluginExtension.jvmOverhead
+            logger.info("jvmMem property found, setting memory to ${parsedJson.mem} and JAVA_OPTS -Xmx to ${parsedJson.jvmMem}")
+
             if (parsedJson.env == null) {
                 def jsonBuilder = new JsonBuilder()
                 jsonBuilder {
