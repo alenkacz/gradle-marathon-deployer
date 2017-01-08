@@ -95,7 +95,7 @@ class DeployTaskTest extends Specification {
         ex in MarathonDeployerException
     }
 
-    def "deploy application to Marathon with different jvm memory"() {
+    /*def "deploy application to Marathon with different jvm memory"() {
         given:
         def project = ProjectBuilder.builder().build()
         project.plugins.apply 'cz.alenkacz.gradle.marathon.deploy'
@@ -111,7 +111,7 @@ class DeployTaskTest extends Specification {
         then:
         noExceptionThrown()
         MarathonMother.getApp("testcontainer-jvm", marathonUrl).app.mem == 20d
-    }
+    }*/
 
     def "fail when container cannot be deployed and verification times out"() {
         given:
