@@ -1,6 +1,6 @@
 # gradle-marathon-deployer
 
-[![Build Status](https://travis-ci.org/alenkacz/gradle-marathon-deployer.svg)](https://travis-ci.org/alenkacz/gradle-marathon-deployer) [ ![Download](https://api.bintray.com/packages/alenkacz/maven/gradle-marathon-deployer/images/download.svg) ](https://bintray.com/alenkacz/maven/gradle-marathon-deployer/_latestVersion)
+[![Build Status](https://travis-ci.org/alenkacz/gradle-marathon-deployer.svg?branch=master)](https://travis-ci.org/alenkacz/gradle-marathon-deployer) [ ![Download](https://api.bintray.com/packages/alenkacz/maven/gradle-marathon-deployer/images/download.svg) ](https://bintray.com/alenkacz/maven/gradle-marathon-deployer/_latestVersion)
 
 Gradle plugin that can deploy your application to Marathon (https://mesosphere.github.io/marathon/).
 
