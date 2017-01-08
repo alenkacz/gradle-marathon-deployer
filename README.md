@@ -42,8 +42,12 @@ Tasks are added under the publishing group in yous gradle project.
 - *deployToMarathon* - deploys your application to Marathon
 - *deployCanaryToMarathon* - canary deployment on top of Marathon. Creates new application id (just the original application id with postfix "-canary") and pushes that to Marathon in one instance. Read more about [canary deployment](http://martinfowler.com/bliki/CanaryRelease.html)
 
-JVM support
+Extended Marathon json
 ====================
+To support some common use cases when deploying applications to Marathon, this plugin also supports richer version of Marathon json.
+
+JVM memory
+------
 Running JVM apps in containers can be sometimes painful because of its extensive memory demand. To make it easier for JVM developers, marathon json can be enriched by property *jvmMem* that will contain number of megabytes your JVM app needs. Memory of the whole container will then be altered to reflect the constant overhead of the JVM itself so that your container does not go out of memory.
 
 If you want to start using this feature, just add a jvmMem property on the top level of your marathon json as in the following example:
