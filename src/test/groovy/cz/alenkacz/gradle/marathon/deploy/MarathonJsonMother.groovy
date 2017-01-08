@@ -18,7 +18,7 @@ class MarathonJsonMother {
         return marathonFilePath
     }
 
-    static def String jsonWithJvmMem(Integer jvmMemory, String javaOpts = "") {
+    static def String jsonWithJvmMem(Integer jvmMemory, String javaOpts = "", boolean containsMem = false) {
         def marathonFilePath = ""
         File.createTempFile("marathon",".json").with {
             deleteOnExit()
@@ -26,7 +26,7 @@ class MarathonJsonMother {
             write """{
   "id": "testcontainer",
   "cpus": 1,
-  "mem": 128,
+  ${containsMem ? "\"mem\": 128," : ""}
   "jvmMem": $jvmMemory,
   "instances": 1,
   "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done",

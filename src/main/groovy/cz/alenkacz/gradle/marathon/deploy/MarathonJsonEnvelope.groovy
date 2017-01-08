@@ -10,7 +10,7 @@ class MarathonJsonEnvelope {
     private PluginExtension pluginExtension
     private Logger logger
 
-    public MarathonJsonEnvelope(PluginExtension pluginExtension, Logger logger) {
+    public MarathonJsonEnvelope(PluginExtension pluginExtension) {
         this.logger = logger
         this.pluginExtension = pluginExtension
         if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
@@ -25,12 +25,12 @@ class MarathonJsonEnvelope {
         return parsedJson.id
     }
 
-    String getFinalJson() {
+    String getFinalJson(Logger logger) {
         if (pluginExtension.dockerImageName) {
             logger.info("Rewriting container.docker.image property to ${pluginExtension.dockerImageName}")
             parsedJson.container.docker.image = pluginExtension.dockerImageName
         }
-        if (parsedJson.jvmMem != null) {
+        if (parsedJson.jvmMem != null && parsedJson.mem == null) {
             parsedJson.mem = parsedJson.jvmMem + pluginExtension.jvmOverhead
             logger.info("jvmMem property found, setting memory to ${parsedJson.mem} and JAVA_OPTS -Xmx to ${parsedJson.jvmMem}")
 

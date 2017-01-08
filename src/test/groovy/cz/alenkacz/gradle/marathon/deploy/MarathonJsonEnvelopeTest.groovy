@@ -13,11 +13,26 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
-        def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
+        def target = new MarathonJsonEnvelope(extension)
+        def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
 
         then:
         actual.mem == 328
+    }
+
+    def "not adjust memory setting based on jvmMem property when mem is set too"() {
+        given:
+        def marathonWithJvmMem = MarathonJsonMother.jsonWithJvmMem(128, "", true)
+        def extension = new PluginExtension()
+        extension.setPathToJsonFile(marathonWithJvmMem)
+        extension.jvmOverhead = 200
+
+        when:
+        def target = new MarathonJsonEnvelope(extension)
+        def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
+
+        then:
+        actual.mem == 128
     }
 
     def "add -Xmx property to JAVA_OPTS based on jvmMem property"() {
@@ -28,8 +43,8 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
-        def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
+        def target = new MarathonJsonEnvelope(extension)
+        def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
 
         then:
         actual.env.JAVA_OPTS == "-Xmx128m"
@@ -43,8 +58,8 @@ class MarathonJsonEnvelopeTest extends Specification {
         extension.jvmOverhead = 200
 
         when:
-        def target = new MarathonJsonEnvelope(extension, ProjectBuilder.builder().build().logger)
-        def actual = new JsonSlurper().parse(target.getFinalJson().toCharArray())
+        def target = new MarathonJsonEnvelope(extension)
+        def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
 
         then:
         actual.env.JAVA_OPTS == "-Xmx128m -Dabc=1"
