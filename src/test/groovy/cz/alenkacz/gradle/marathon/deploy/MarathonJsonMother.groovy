@@ -24,9 +24,9 @@ class MarathonJsonMother {
             deleteOnExit()
 
             write """{
-  "id": "testcontainer",
+  "id": "testcontainer-jvm",
   "cpus": 1,
-  ${containsMem ? "\"mem\": 128," : ""}
+  ${containsMem ? "\"mem\": 10," : ""}
   "jvmMem": $jvmMemory,
   "instances": 1,
   "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done",

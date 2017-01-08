@@ -94,7 +94,7 @@ class DeployTaskTest extends Specification {
         Exception ex = thrown()
         ex in MarathonDeployerException
     }
-    
+
     def "deploy application to Marathon with different jvm memory"() {
         given:
         def project = ProjectBuilder.builder().build()
@@ -102,14 +102,15 @@ class DeployTaskTest extends Specification {
         def extension = (PluginExtension) project.extensions.findByName('marathon')
         def marathonUrl = MarathonMother.getMarathonUrl()
         extension.setUrl(marathonUrl)
-        extension.setPathToJsonFile(MarathonJsonMother.jsonWithJvmMem(128))
+        extension.setJvmOverhead(10)
+        extension.setPathToJsonFile(MarathonJsonMother.jsonWithJvmMem(10))
 
         when:
         project.tasks.deployToMarathon.deployToMarathon()
 
         then:
         noExceptionThrown()
-        MarathonMother.getApp("testcontainer", marathonUrl).app.mem == 328
+        MarathonMother.getApp("testcontainer", marathonUrl).app.mem == 20
     }
 
     def "fail when container cannot be deployed and verification times out"() {
