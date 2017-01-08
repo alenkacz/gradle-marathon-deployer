@@ -54,4 +54,4 @@ If you want to start using this feature, just add a jvmMem property on the top l
         ... other marathon json properties
     }
 
-For this to work, when starting your JVM app, it must pass JAVA_OPTS environment variable to the JVM.
+For this to work, when starting your JVM app, it must pass JAVA_OPTS environment variable to the JVM. JAVA_OPTS is handled automatically for you if you use [distribution plugin](https://docs.gradle.org/current/userguide/distribution_plugin.html).
