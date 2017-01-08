@@ -2,9 +2,9 @@ version: "2"
 
 services:
   zookeeper:
-    image: jplock/zookeeper
+    image: jplock/zookeeper:3.4.8
   marathon:
-    image: mesosphere/marathon:v1.4.0
+    image: mesosphere/marathon:v1.3.6
     command:
       --master local --zk zk://zookeeper:2181/marathon
     links:
