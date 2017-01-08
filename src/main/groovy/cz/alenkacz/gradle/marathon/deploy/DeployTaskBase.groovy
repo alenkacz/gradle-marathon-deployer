@@ -37,7 +37,7 @@ class DeployTaskBase extends DefaultTask  {
         def marathonApiUrl = "${pluginExtension.url}/v2"
         def marathonJsonEnvelope = marathonJsonFactory(pluginExtension)
         def String applicationId = marathonJsonEnvelope.getApplicationId()
-        def String marathonJson = marathonJsonEnvelope.getFinalJson()
+        def String marathonJson = marathonJsonEnvelope.getFinalJson(logger)
         def String deploymentId
         def eventStream = new FinishedDeploymentVerifier(client, jsonSlurper, marathonApiUrl, logger)
         // we need to start capturing deployments before making actual deployment request
