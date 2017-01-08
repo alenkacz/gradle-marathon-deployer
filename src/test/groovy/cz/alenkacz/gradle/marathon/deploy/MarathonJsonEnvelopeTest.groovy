@@ -32,7 +32,7 @@ class MarathonJsonEnvelopeTest extends Specification {
         def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
 
         then:
-        actual.mem == 128
+        actual.mem == 10
     }
 
     def "add -Xmx property to JAVA_OPTS based on jvmMem property"() {

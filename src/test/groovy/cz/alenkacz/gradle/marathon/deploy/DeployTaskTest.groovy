@@ -110,7 +110,7 @@ class DeployTaskTest extends Specification {
 
         then:
         noExceptionThrown()
-        MarathonMother.getApp("testcontainer", marathonUrl).app.mem == 20
+        MarathonMother.getApp("testcontainer-jvm", marathonUrl).app.mem == 20d
     }
 
     def "fail when container cannot be deployed and verification times out"() {
