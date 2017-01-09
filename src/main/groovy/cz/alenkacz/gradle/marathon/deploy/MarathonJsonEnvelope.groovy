@@ -49,6 +49,6 @@ class MarathonJsonEnvelope {
             parsedJson.env.JAVA_OPTS = javaOptsBuilder.toString()
 
         }
-        return JsonOutput.toJson(parsedJson)
+        return JsonOutput.prettyPrint(JsonOutput.toJson(parsedJson))
     }
 }

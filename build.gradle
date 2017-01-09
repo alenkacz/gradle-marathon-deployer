@@ -21,6 +21,7 @@ group 'cz.alenkacz.gradle'
 apply plugin: 'groovy'
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'docker-compose'
 apply plugin: "com.gradle.plugin-publish"
