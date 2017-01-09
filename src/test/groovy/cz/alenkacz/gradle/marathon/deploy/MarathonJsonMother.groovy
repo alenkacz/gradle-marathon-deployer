@@ -18,6 +18,27 @@ class MarathonJsonMother {
         return marathonFilePath
     }
 
+    static def String validDockerMarathonJsonPath() {
+        def marathonFilePath = ""
+        File.createTempFile("marathon",".json").with {
+            deleteOnExit()
+
+            write """{
+  "id": "testcontainer",
+  "cpus": 1,
+  "mem": 128,
+  "instances": 1,
+  "container": {
+    "docker": {
+        "image": "willberewritten?"
+    }
+  }
+}"""
+            marathonFilePath = absolutePath
+        }
+        return marathonFilePath
+    }
+
     static def String jsonWithJvmMem(Integer jvmMemory, String javaOpts = "", boolean containsMem = false) {
         def marathonFilePath = ""
         File.createTempFile("marathon",".json").with {
