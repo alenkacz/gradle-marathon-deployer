@@ -41,6 +41,7 @@ Tasks are added under the publishing group in yous gradle project.
 
 - *deployToMarathon* - deploys your application to Marathon
 - *deployCanaryToMarathon* - canary deployment on top of Marathon. Creates new application id (just the original application id with postfix "-canary") and pushes that to Marathon in one instance. Read more about [canary deployment](http://martinfowler.com/bliki/CanaryRelease.html)
+- *printMarathonJson* - prints out the marathon json that would be used when deploying to Marathon. Good for debugging...
 
 Extended Marathon json
 ====================
