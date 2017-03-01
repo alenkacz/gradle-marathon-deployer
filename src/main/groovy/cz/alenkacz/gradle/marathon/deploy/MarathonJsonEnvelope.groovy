@@ -8,11 +8,16 @@ import org.gradle.api.logging.Logger
 class MarathonJsonEnvelope {
     protected def Object parsedJson
     private PluginExtension pluginExtension
+    private BigDecimal mesosResourcesRatio
     private Logger logger
 
-    public MarathonJsonEnvelope(PluginExtension pluginExtension) {
+    public MarathonJsonEnvelope(PluginExtension pluginExtension, BigDecimal mesosResourcesRatio = 1.0) {
         this.logger = logger
         this.pluginExtension = pluginExtension
+        this.mesosResourcesRatio = mesosResourcesRatio
+        if (mesosResourcesRatio <= 0) {
+            throw new Exception("mesosResourcesRatio must be greater than zero")
+        }
         if (!pluginExtension.pathToJsonFile || !new File(pluginExtension.pathToJsonFile).exists()) {
             throw new Exception("Invalid path to marathon json ${pluginExtension.pathToJsonFile}")
         }
@@ -49,6 +54,30 @@ class MarathonJsonEnvelope {
             parsedJson.env.JAVA_OPTS = javaOptsBuilder.toString()
 
         }
+
+        if (parsedJson.cpus == null && parsedJson.mem != null) {
+            parsedJson.cpus = parsedJson.mem * mesosResourcesRatio
+
+            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "low") {
+                parsedJson.cpus = parsedJson.cpus * 0.3
+            }
+
+            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "high") {
+                parsedJson.cpus = parsedJson.cpus * 3
+            }
+
+            if (parsedJson.labels == null) {
+                parsedJson.labels = [:]
+            }
+
+            if (parsedJson.cpuProfile != null) {
+                parsedJson.labels.cpu_profile = parsedJson.cpuProfile
+            }
+            else {
+                parsedJson.labels.cpu_profile = "normal"
+            }
+        }
+
         return JsonOutput.prettyPrint(JsonOutput.toJson(parsedJson))
     }
 }

@@ -24,6 +24,7 @@ class PrintTaskTest extends Specification {
             marathon {
                 dockerImageName = "imagename"
                 pathToJsonFile = "${MarathonJsonMother.validDockerMarathonJsonPath()}"
+                url = "${MarathonMother.getMarathonUrl()}"
             }
         """
 

@@ -8,7 +8,7 @@ class PrintTask extends DefaultTask {
 
     @TaskAction
     def print() {
-        def marathonJsonEnvelope = new MarathonJsonEnvelope(pluginExtension)
+        def marathonJsonEnvelope = new MarathonJsonEnvelope(pluginExtension, new ResourcesRatioFetcher(pluginExtension.getMarathonApiUrl()).getMesosResourcesRatio())
         println(marathonJsonEnvelope.getFinalJson(new NoOpLogger()))
     }
 }

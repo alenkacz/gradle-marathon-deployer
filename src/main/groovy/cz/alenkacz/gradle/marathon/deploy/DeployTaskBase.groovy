@@ -33,9 +33,9 @@ class DeployTaskBase extends DefaultTask  {
         if (!pluginExtension.url) {
             throw new Exception("Missing required property marathon url")
         }
+        def marathonApiUrl = pluginExtension.getMarathonApiUrl()
 
-        def marathonApiUrl = "${pluginExtension.url}/v2"
-        def marathonJsonEnvelope = marathonJsonFactory(pluginExtension)
+        def marathonJsonEnvelope = marathonJsonFactory(pluginExtension, new ResourcesRatioFetcher(marathonApiUrl).getMesosResourcesRatio())
         def String applicationId = marathonJsonEnvelope.getApplicationId()
         def String marathonJson = marathonJsonEnvelope.getFinalJson(logger)
         def String deploymentId
@@ -61,6 +61,7 @@ class DeployTaskBase extends DefaultTask  {
             println("Deployment was successful")
         }
     }
+
 
     private String prepareMarathonDeployUrl(String marathonApiUrl, String applicationId) {
         "${marathonApiUrl}/apps/${URLEncoder.encode(applicationId, StandardCharsets.UTF_8.toString())}${pluginExtension.forceDeployment ? "?force=true" : ""}"

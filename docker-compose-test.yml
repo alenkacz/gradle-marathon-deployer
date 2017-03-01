@@ -2,20 +2,64 @@ version: "2"
 
 services:
   zookeeper:
-    image: jplock/zookeeper:3.4.8
-  marathon:
-    image: mesosphere/marathon:v1.3.6
-    command:
-      --master local --zk zk://zookeeper:2181/marathon
+    image: garland/zookeeper
+    ports:
+     - "2181"
+
+  mesos-master:
+    image: mesosphere/mesos-master:1.0.0
+    entrypoint: [ "mesos-master" ]
+    ports:
+      - "5050:5050"
     links:
       - zookeeper
-    ports:
-      - "8080"
     environment:
       - MESOS_CLUSTER=local
-      - MESOS_HOSTNAME=mesos-master.docker
+      - MESOS_HOSTNAME=mesos-master
       - MESOS_LOG_DIR=/var/log
       - MESOS_QUORUM=1
       - MESOS_WORK_DIR=/var/lib/mesos
       - MESOS_ROLES=public
       - MESOS_ZK=zk://zookeeper:2181/mesos
+
+  mesos-slave:
+    image: mesosphere/mesos-slave:1.0.0
+    entrypoint:
+      - mesos-slave
+    privileged: true
+    ports:
+      - "5051"
+    links:
+      - zookeeper
+      - mesos-master
+    environment:
+      - MESOS_CONTAINERIZERS=mesos
+      - MESOS_ISOLATOR=cgroups/cpu, cgroups/mem
+      - MESOS_LOG_DIR=var/log
+      - MESOS_MASTER=zk://zookeeper:2181/mesos
+      - MESOS_PORT=5051
+      - MESOS_WORK_DIR=/var/lib/mesos
+      - MESOS_EXECUTOR_REGISTRATION_TIMEOUT=5mins
+      - MESOS_EXECUTOR_SHUTDOWN_GRACE_PERIOD=90secs
+      - MESOS_DOCKER_STOP_TIMEOUT=60secs
+      - MESOS_RESOURCES=cpus:4;mem:1280;disk:25600;ports(*):[12000-12999]
+
+  marathon:
+    image: mesosphere/marathon:latest
+    ports:
+      - "8080:8080"
+    links:
+      - zookeeper
+      - mesos-master
+      - mesos-slave
+    environment:
+      - MARATHON_ZK=zk://zookeeper:2181/marathon
+      - MARATHON_MASTER=zk://zookeeper:2181/mesos
+      - MARATHON_DECLINE_OFFER_DURATION=3600000
+      - MARATHON_MESOS_AUTHENTICATION_PRINCIPAL=marathon
+      - MARATHON_MESOS_ROLE=public
+
+networks:
+  default:
+    external:
+      name: my-network

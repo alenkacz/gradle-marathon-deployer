@@ -64,4 +64,19 @@ class MarathonJsonEnvelopeTest extends Specification {
         then:
         actual.env.JAVA_OPTS == "-Xmx128m -Dabc=1"
     }
+
+    def "add cpus field based on cloud's cpu/memory ratio"() {
+        given:
+        def marathonWithoutCpus = MarathonJsonMother.validMarathonJsonWithoutCpusPath()
+        def extension = new PluginExtension()
+        extension.setPathToJsonFile(marathonWithoutCpus)
+        def ratio = 0.1
+
+        when:
+        def target = new MarathonJsonEnvelope(extension, ratio)
+        def actual = new JsonSlurper().parse(target.getFinalJson(new NoOpLogger()).toCharArray())
+
+        then:
+        actual.cpus == 1
+    }
 }
