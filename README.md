@@ -21,9 +21,9 @@ Usage
 	}
 
 	apply plugin: 'marathon-deploy'
-    
+
     marathon {
-    	url = "http://path-to-your-marathon-instance.com"
+	url = "http://path-to-your-marathon-instance.com"
     }
 
 Properties
@@ -60,3 +60,7 @@ If you want to start using this feature, just add a jvmMem property on the top l
     }
 
 For this to work, when starting your JVM app, it must pass JAVA_OPTS environment variable to the JVM. JAVA_OPTS is handled automatically for you if you use [distribution plugin](https://docs.gradle.org/current/userguide/distribution_plugin.html).
+
+CPU profile
+-----------
+If you don't want to specify cpus option in marathon.json, you can get it computed for you. Simply omit cpus field in marathon.json. The cpus number gets calculated from required memory and Mesos resources ratio (number of CPUS / total RAM size). You can change cpus count policy by adding field cpuProfile with one of these values (low, normal, high). The default value is normal. Low option means that the computed value is multiplied by 0.3. High option means that the computed value is multiplied by 3.
