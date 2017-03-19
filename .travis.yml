@@ -18,7 +18,9 @@ before_install:
   - sudo docker build --tag=build-image .
 
 script:
-  - sudo docker run -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock build-image test --info
+  - sudo docker network create --driver bridge my-network
+  - sudo docker run --network my-network -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock build-image test --info
+  - sudo docker network rm my-network
 
 after_success:
   - test $TRAVIS_PULL_REQUEST == "false" && test "$TRAVIS_TAG" != "" && test $TRAVIS_REPO_SLUG == "alenkacz/gradle-marathon-deployer" && sudo docker run -v $(pwd):/build -v $HOME/.m2:/root/.m2 -v $HOME/.gradle:/root/.gradle -v /var/run/docker.sock:/var/run/docker.sock -e "BINTRAY_USER=$BINTRAY_USER" -e "BINTRAY_KEY=$BINTRAY_KEY" -e "GRADLE_PORTAL_KEY=$GRADLE_PORTAL_KEY" -e "GRADLE_PORTAL_SECRET=$GRADLE_PORTAL_SECRET" build-image bintrayUpload publishPlugins -Pversion="$TRAVIS_TAG" --info

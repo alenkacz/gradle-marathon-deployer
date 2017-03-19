@@ -35,7 +35,7 @@ class DeployTaskTest extends Specification {
             def extension = (PluginExtension) project.extensions.findByName('marathon')
             extension.setPathToJsonFile("non/existing/path.json")
             extension.setDockerImageName("imagename")
-            extension.setUrl("http://marathon.url")
+            extension.setUrl(MarathonMother.getMarathonUrl())
         when:
             project.tasks.deployToMarathon.deployToMarathon()
 

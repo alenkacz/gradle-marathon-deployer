@@ -4,6 +4,7 @@ import groovy.time.TimeDuration
 
 class PluginExtension {
     def String url
+    def String marathonApiUrl
     def String dockerImageName
     def String pathToJsonFile
     def TimeDuration verificationTimeout
@@ -20,5 +21,9 @@ class PluginExtension {
         verificationTimeout = new TimeDuration(0, 0, 90, 0)
         deploymentRequestTimeout = new TimeDuration(0, 0, 5, 0)
         jvmOverhead = 200
+    }
+
+    public String getMarathonApiUrl() {
+        return "${this.url}/v2"
     }
 }

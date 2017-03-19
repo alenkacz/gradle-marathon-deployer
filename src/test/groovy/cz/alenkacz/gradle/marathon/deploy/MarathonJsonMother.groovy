@@ -98,4 +98,20 @@ class MarathonJsonMother {
         }
         return marathonFilePath
     }
+
+    static def String validMarathonJsonWithoutCpusPath() {
+        def marathonFilePath = ""
+        File.createTempFile("marathon",".json").with {
+            deleteOnExit()
+
+            write """{
+  "id": "testcontainer",
+  "mem": 10,
+  "instances": 1,
+  "cmd": "while [ true ] ; do echo 'Hello Marathon' ; sleep 5 ; done"
+}"""
+            marathonFilePath = absolutePath
+        }
+        return marathonFilePath
+    }
 }
