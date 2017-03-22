@@ -1,9 +1,9 @@
 package cz.alenkacz.gradle.marathon.deploy
 
-import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class PrintTaskTest extends Specification {
@@ -14,6 +14,7 @@ class PrintTaskTest extends Specification {
         buildFile = testProjectDir.newFile('build.gradle')
     }
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "print out the final marathon.json"() {
         given:
         buildFile << """
