@@ -1,9 +1,11 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 import org.gradle.testfixtures.ProjectBuilder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class CanaryDeployTaskTest extends Specification {
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "deploy canary of application to Marathon"() {
         given:
         def project = ProjectBuilder.builder().build()

@@ -35,6 +35,42 @@ class MarathonJsonEnvelope {
             logger.info("Rewriting container.docker.image property to ${pluginExtension.dockerImageName}")
             parsedJson.container.docker.image = pluginExtension.dockerImageName
         }
+        computeJvmMem(logger)
+
+        computeCpus(logger)
+
+        return JsonOutput.prettyPrint(JsonOutput.toJson(parsedJson))
+    }
+
+    def computeCpus(Logger logger) {
+        if (parsedJson.cpus == null && parsedJson.mem != null) {
+            logger.info("cpus not set, computing cpus from memory and mesos resource ratio")
+            parsedJson.cpus = parsedJson.mem * mesosResourcesRatio
+
+            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "low") {
+                parsedJson.cpus = parsedJson.cpus * 0.3
+                logger.info("cpuProfile property found, set to low. Using just 0.3 times of the CPU assigned")
+            }
+
+            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "high") {
+                parsedJson.cpus = parsedJson.cpus * 3
+                logger.info("cpuProfile property found, set to high. Using 3 times of the CPU assigned")
+            }
+
+            if (parsedJson.labels == null) {
+                parsedJson.labels = [:]
+            }
+
+            if (parsedJson.cpuProfile != null) {
+                parsedJson.labels.cpu_profile = parsedJson.cpuProfile
+            }
+            else {
+                parsedJson.labels.cpu_profile = "normal"
+            }
+        }
+    }
+
+    def computeJvmMem(Logger logger) {
         if (parsedJson.jvmMem != null && parsedJson.mem == null) {
             parsedJson.mem = parsedJson.jvmMem + pluginExtension.jvmOverhead
             logger.info("jvmMem property found, setting memory to ${parsedJson.mem} and JAVA_OPTS -Xmx to ${parsedJson.jvmMem}")
@@ -54,30 +90,5 @@ class MarathonJsonEnvelope {
             parsedJson.env.JAVA_OPTS = javaOptsBuilder.toString()
 
         }
-
-        if (parsedJson.cpus == null && parsedJson.mem != null) {
-            parsedJson.cpus = parsedJson.mem * mesosResourcesRatio
-
-            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "low") {
-                parsedJson.cpus = parsedJson.cpus * 0.3
-            }
-
-            if (parsedJson.cpuProfile != null && parsedJson.cpuProfile == "high") {
-                parsedJson.cpus = parsedJson.cpus * 3
-            }
-
-            if (parsedJson.labels == null) {
-                parsedJson.labels = [:]
-            }
-
-            if (parsedJson.cpuProfile != null) {
-                parsedJson.labels.cpu_profile = parsedJson.cpuProfile
-            }
-            else {
-                parsedJson.labels.cpu_profile = "normal"
-            }
-        }
-
-        return JsonOutput.prettyPrint(JsonOutput.toJson(parsedJson))
     }
 }

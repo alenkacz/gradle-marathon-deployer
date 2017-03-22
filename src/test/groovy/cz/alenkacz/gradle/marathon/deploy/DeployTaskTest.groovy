@@ -8,6 +8,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import java.time.Instant
@@ -28,6 +29,7 @@ class DeployTaskTest extends Specification {
         ex.message.toLowerCase().contains("url")
     }
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "fail because of incorrect path to json"() {
         given:
             def project = ProjectBuilder.builder().build()
@@ -44,6 +46,7 @@ class DeployTaskTest extends Specification {
             ex.message.toLowerCase().contains("non/existing/path.json")
     }
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "deploy application to Marathon"() {
         given:
         def project = ProjectBuilder.builder().build()
@@ -61,6 +64,7 @@ class DeployTaskTest extends Specification {
         MarathonMother.applicationIsDeployed("testcontainer", marathonUrl)
     }
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "deploy application to Marathon with force"() {
         given:
         def project = ProjectBuilder.builder().build()
@@ -79,6 +83,7 @@ class DeployTaskTest extends Specification {
         MarathonMother.applicationIsDeployed("testcontainer", marathonUrl)
     }
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "fail when incorrect marathon url provided"() {
         given:
         def project = ProjectBuilder.builder().build()
@@ -113,6 +118,7 @@ class DeployTaskTest extends Specification {
         MarathonMother.getApp("testcontainer-jvm", marathonUrl).app.mem == 20d
     }*/
 
+    @IgnoreIf({ IntegrationTestHelper.shouldSkipIntegrationTests() })
     def "fail when container cannot be deployed and verification times out"() {
         given:
         def project = ProjectBuilder.builder().build()

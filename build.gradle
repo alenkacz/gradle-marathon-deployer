@@ -33,7 +33,10 @@ repositories {
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-dockerCompose.isRequiredBy(test)
+if (System.getenv("runIntegrationTests").equals("true")) {
+    // integration tests must be run from docker only, because it require docker network
+    dockerCompose.isRequiredBy(test)
+}
 dockerCompose {
     useComposeFiles = ['docker-compose-test.yml']
     waitForTcpPortsTimeout = java.time.Duration.ofMinutes(1)
