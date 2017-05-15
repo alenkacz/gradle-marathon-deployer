@@ -10,7 +10,7 @@ If you want to deploy your application using canary deployments, *deployCanaryTo
 
 Usage
 ====================
-
+```groovy
 	buildscript {
 		repositories {
 			jcenter()
@@ -23,20 +23,34 @@ Usage
 	apply plugin: 'marathon-deploy'
 
     marathon {
-	url = "http://path-to-your-marathon-instance.com"
+	    url = 'http://path-to-your-marathon-instance.com'
+	    dockerImageName = 'yourorg/app:1.0.0'
     }
+```
+
+Also [alenkacz/marathon-deployer](https://hub.docker.com/r/alenkacz/marathon-deployer/) Docker image is available so you can actually use this plugin to deploy any application from any environment where Docker is available:
+```bash
+docker run \
+    -e MARATHON_URL=http://path-to-your-marathon-instance.com \
+    -e DOCKER_IMAGE_NAME=yourorg/app:1.0.0 \
+    -v /path/to/your/marathon.json:/marathon.json
+    alenkacz/marathon-deployer
+```
 
 Properties
-====================
-- *url* - url to your marathon application
-- *dockerImageName* (OPTIONAL) - full image name that will be provided to marathon, use this only if you want to override the image name provided in your json (e.g. you want to deploy a testing version as a part of your CI/CD pipeline)
-- *pathToJsonFile* (OPTIONAL) - project relative path to your json file, default is *deploy/marathon.json*
-- *verificationTimeout* (OPTIONAL) - timeout when querying Marathon to verify that there are no pending deployments left, default is 90 seconds
-- *deploymentRequestTimeout* (OPTIONAL) - timeout for the initial deployment request, default is 5 seconds
-- *jvmOverhead* (OPTIONAL) - number of MBs that the container needs on top of JVM app memory (default is 200)
+==========
+| Gradle property | Docker environment variable | Default | Description |
+| --------------- | --------------------------- | ------- | ----------- |
+| `url`           | `MARATHON_URL`              | N/A     | url to your Marathon instance |
+| `dockerImageName` | `DOCKER_IMAGE_NAME`              | N/A     | full image name that will be provided to Marathon, use this only if you want to override the image name provided in your json (e.g. you want to deploy a testing version as a part of your CI/CD pipeline) |
+| `verificationTimeout` | `MARATHON_DEPLOY_TIMEOUT_SECONDS` | 90 seconds | timeout when querying Marathon to verify that there are no pending deployments left |
+| `deploymentRequestTimeout` | `MARATHON_DEPLOY_REQUEST_TIMEOUT_SECONDS` | 5 seconds | timeout for the initial deployment request |
+| `jvmOverhead` | `JVM_OVERHEAD` | 200 MB | number of MBs that the container needs on top of JVM app memory |
+| `forceDeployment` | `FORCE_DEPLOYMENT` | N/A     | url to your Marathon instance |
+| `pathToJsonFile` | N/A | `deploy/marathon.json` | Gradle project relative path to your json file |
 
 Tasks
-====================
+=====
 Tasks are added under the publishing group in yous gradle project.
 
 - *deployToMarathon* - deploys your application to Marathon
@@ -44,11 +58,11 @@ Tasks are added under the publishing group in yous gradle project.
 - *printMarathonJson* - prints out the marathon json that would be used when deploying to Marathon. Good for debugging...
 
 Extended Marathon json
-====================
+======================
 To support some common use cases when deploying applications to Marathon, this plugin also supports richer version of Marathon json.
 
 JVM memory
-------
+----------
 Running JVM apps in containers can be sometimes painful because of its extensive memory demand. To make it easier for JVM developers, marathon json can be enriched by property *jvmMem* that will contain number of megabytes your JVM app needs. Memory of the whole container will then be altered to reflect the constant overhead of the JVM itself so that your container does not go out of memory.
 
 If you want to start using this feature, just add a jvmMem property on the top level of your marathon json as in the following example:
