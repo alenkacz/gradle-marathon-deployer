@@ -6,12 +6,12 @@ import groovy.json.JsonSlurper
 import org.gradle.api.logging.Logger
 
 class MarathonJsonEnvelope {
-    protected def Object parsedJson
+    protected Object parsedJson
     private PluginExtension pluginExtension
     private BigDecimal mesosResourcesRatio
     private Logger logger
 
-    public MarathonJsonEnvelope(PluginExtension pluginExtension, BigDecimal mesosResourcesRatio = 1.0) {
+    MarathonJsonEnvelope(PluginExtension pluginExtension, BigDecimal mesosResourcesRatio = 1.0) {
         this.logger = logger
         this.pluginExtension = pluginExtension
         this.mesosResourcesRatio = mesosResourcesRatio

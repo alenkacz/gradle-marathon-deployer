@@ -1,7 +1,7 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 class DeployTask extends DeployTaskBase {
-    public DeployTask() {
+    DeployTask() {
         super({ PluginExtension pluginExtension, BigDecimal mesosResourceRatio -> new MarathonJsonEnvelope(pluginExtension, mesosResourceRatio) })
 
         group = 'publishing'
