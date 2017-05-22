@@ -1,7 +1,6 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 import groovy.json.JsonSlurper
-import groovy.time.TimeDuration
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
 import org.glassfish.jersey.media.sse.SseFeature
@@ -55,7 +54,7 @@ abstract class DeployTaskBase extends DefaultTask  {
             throw new MarathonDeployerException("Error when requesting to deploy application to Marathon", e)
         }
 
-        if (!eventStream.isDeploymentFinished(deploymentId, new TimeDuration(0, 0, 30, 0))) {
+        if (!eventStream.isDeploymentFinished(deploymentId, pluginExtension.verificationTimeout)) {
             throw new MarathonDeployerException("The application deployment did not finish in the defined timeout. Deployment_success event for the initiated deployment did not appear in the event stream.")
         } else {
             println("Deployment was successful")
