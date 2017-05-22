@@ -6,14 +6,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
-        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.3.11"
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.5"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath "com.avast.gradle:docker-compose-gradle-plugin:0.4.2"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
     }
 }
 
 plugins {
-    id 'net.researchgate.release' version '2.4.0'
+    id 'net.researchgate.release' version '2.6.0'
 }
 
 group 'cz.alenkacz.gradle'
