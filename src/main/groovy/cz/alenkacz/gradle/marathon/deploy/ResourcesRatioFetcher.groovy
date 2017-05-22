@@ -1,8 +1,9 @@
 package cz.alenkacz.gradle.marathon.deploy
 
-//import org.asynchttpclient.AsyncHttpClient
-import org.asynchttpclient.DefaultAsyncHttpClient
 import groovy.json.JsonSlurper
+import org.asynchttpclient.DefaultAsyncHttpClient
+
+import java.nio.charset.StandardCharsets
 
 class ResourcesRatioFetcher {
 
@@ -13,7 +14,7 @@ class ResourcesRatioFetcher {
     ResourcesRatioFetcher(String marathonApiUrl) {
         this.marathonApiUrl = marathonApiUrl
         this.asyncHttpClient = new DefaultAsyncHttpClient()
-        this.jsonSlurper = new groovy.json.JsonSlurper()
+        this.jsonSlurper = new JsonSlurper()
     }
 
     public BigDecimal getMesosResourcesRatio() {

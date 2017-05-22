@@ -7,12 +7,10 @@ import groovy.time.TimeDuration
 import org.asynchttpclient.*
 import org.glassfish.jersey.media.sse.EventSource
 import org.glassfish.jersey.media.sse.InboundEvent
-import org.glassfish.jersey.media.sse.SseFeature
 import org.gradle.api.logging.Logger
 import org.glassfish.jersey.media.sse.EventListener
 
 import javax.ws.rs.client.Client
-import javax.ws.rs.client.ClientBuilder
 import javax.ws.rs.client.WebTarget
 import java.util.concurrent.ConcurrentHashMap
 
@@ -25,7 +23,7 @@ class FinishedDeploymentVerifier {
     private EventSource eventSource
     private Client client
 
-    public FinishedDeploymentVerifier(Client client, JsonSlurper jsonSlurper, String marathonApiUrl, Logger logger) {
+    FinishedDeploymentVerifier(Client client, JsonSlurper jsonSlurper, String marathonApiUrl, Logger logger) {
         this.client = client
         this.jsonSlurper = jsonSlurper
         this.logger = logger
@@ -33,11 +31,11 @@ class FinishedDeploymentVerifier {
         this.finishedDeployments = new ConcurrentHashMap<>()
     }
 
-    public void startCapturingFinishedDeployments() {
-        WebTarget target = client.target("$marathonApiUrl/events");
-        eventSource = EventSource.target(target).build();
+    void startCapturingFinishedDeployments() {
+        WebTarget target = client.target("$marathonApiUrl/events")
+        eventSource = EventSource.target(target).build()
         EventListener listener = new EventListener() {
-            public void onEvent(InboundEvent inboundEvent) {
+            void onEvent(InboundEvent inboundEvent) {
                 def receivedEvent = inboundEvent.readData()
                 logger.debug("Found deployment_success event in the marathon event stream")
                 try {
@@ -48,12 +46,12 @@ class FinishedDeploymentVerifier {
                     logger.warn("Unexpected format of event in Marathon event stream: $receivedEvent", e)
                 }
             }
-        };
+        }
         eventSource.register(listener, "deployment_success")
-        eventSource.open();
+        eventSource.open()
     }
 
-    public boolean isDeploymentFinished(String deploymentId, TimeDuration timeout) {
+    boolean isDeploymentFinished(String deploymentId, TimeDuration timeout) {
         def startTime = new Date()
         def deploymentFinished = false
         while (!timedOut(timeout, startTime, new Date())) {
@@ -73,7 +71,7 @@ class FinishedDeploymentVerifier {
         TimeCategory.minus(currentTime, startTime) > limit
     }
 
-    public void close() {
+    void close() {
         try {
             eventStreamFuture.done()
             eventSource.close()

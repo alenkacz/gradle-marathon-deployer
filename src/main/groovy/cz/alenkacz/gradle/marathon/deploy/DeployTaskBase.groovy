@@ -1,7 +1,6 @@
 package cz.alenkacz.gradle.marathon.deploy
 
 import groovy.json.JsonSlurper
-import groovy.time.TimeDuration
 import org.asynchttpclient.AsyncHttpClient
 import org.asynchttpclient.DefaultAsyncHttpClient
 import org.glassfish.jersey.media.sse.SseFeature
@@ -13,14 +12,14 @@ import javax.ws.rs.client.ClientBuilder
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
-class DeployTaskBase extends DefaultTask  {
-    def PluginExtension pluginExtension
-    private def AsyncHttpClient asyncHttpClient
-    private def Client client
-    private def JsonSlurper jsonSlurper
+abstract class DeployTaskBase extends DefaultTask  {
+    PluginExtension pluginExtension
+    private AsyncHttpClient asyncHttpClient
+    private Client client
+    private JsonSlurper jsonSlurper
     private Closure<MarathonJsonEnvelope> marathonJsonFactory
 
-    public DeployTaskBase(Closure<MarathonJsonEnvelope> marathonJsonFactory) {
+    DeployTaskBase(Closure<MarathonJsonEnvelope> marathonJsonFactory) {
         this.marathonJsonFactory = marathonJsonFactory
         asyncHttpClient = new DefaultAsyncHttpClient()
         jsonSlurper = new JsonSlurper()
@@ -36,9 +35,9 @@ class DeployTaskBase extends DefaultTask  {
         def marathonApiUrl = pluginExtension.getMarathonApiUrl()
 
         def marathonJsonEnvelope = marathonJsonFactory(pluginExtension, new ResourcesRatioFetcher(marathonApiUrl).getMesosResourcesRatio())
-        def String applicationId = marathonJsonEnvelope.getApplicationId()
-        def String marathonJson = marathonJsonEnvelope.getFinalJson(logger)
-        def String deploymentId
+        String applicationId = marathonJsonEnvelope.getApplicationId()
+        String marathonJson = marathonJsonEnvelope.getFinalJson(logger)
+        String deploymentId
         def eventStream = new FinishedDeploymentVerifier(client, jsonSlurper, marathonApiUrl, logger)
         // we need to start capturing deployments before making actual deployment request
         // if we have started reading the stream after the request, there might be a race condition of the deployment finishing before us attaching
@@ -55,7 +54,7 @@ class DeployTaskBase extends DefaultTask  {
             throw new MarathonDeployerException("Error when requesting to deploy application to Marathon", e)
         }
 
-        if (!eventStream.isDeploymentFinished(deploymentId, new TimeDuration(0, 0, 30, 0))) {
+        if (!eventStream.isDeploymentFinished(deploymentId, pluginExtension.verificationTimeout)) {
             throw new MarathonDeployerException("The application deployment did not finish in the defined timeout. Deployment_success event for the initiated deployment did not appear in the event stream.")
         } else {
             println("Deployment was successful")

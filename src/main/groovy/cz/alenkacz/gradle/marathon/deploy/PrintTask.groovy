@@ -4,7 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
 class PrintTask extends DefaultTask {
-    def PluginExtension pluginExtension
+    PluginExtension pluginExtension
 
     @TaskAction
     def print() {
