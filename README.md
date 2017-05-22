@@ -39,15 +39,13 @@ docker run \
 
 Properties
 ==========
-| Gradle property | Docker environment variable | Default | Description |
-| --------------- | --------------------------- | ------- | ----------- |
-| `url`           | `MARATHON_URL`              | N/A     | url to your Marathon instance |
-| `dockerImageName` | `DOCKER_IMAGE_NAME`              | N/A     | full image name that will be provided to Marathon, use this only if you want to override the image name provided in your json (e.g. you want to deploy a testing version as a part of your CI/CD pipeline) |
-| `verificationTimeout` | `MARATHON_DEPLOY_TIMEOUT_SECONDS` | 90 seconds | timeout when querying Marathon to verify that there are no pending deployments left |
-| `deploymentRequestTimeout` | `MARATHON_DEPLOY_REQUEST_TIMEOUT_SECONDS` | 5 seconds | timeout for the initial deployment request |
-| `jvmOverhead` | `JVM_OVERHEAD` | 200 MB | number of MBs that the container needs on top of JVM app memory |
-| `forceDeployment` | `FORCE_DEPLOYMENT` | N/A     | url to your Marathon instance |
-| `pathToJsonFile` | N/A | `deploy/marathon.json` | Gradle project relative path to your json file |
+ * `url` (env `MARATHON_URL`) - url to your Marathon instance
+ * `dockerImageName` (env `DOCKER_IMAGE_NAME`) - full image name that will be provided to Marathon, use this only if you want to override the image name provided in your json (e.g. you want to deploy a testing version as a part of your CI/CD pipeline) |
+ * `verificationTimeout` (env`MARATHON_DEPLOY_TIMEOUT_SECONDS`) - timeout when querying Marathon to verify that there are no pending deployments left (default is 90 seconds)
+ * `deploymentRequestTimeout` (env `MARATHON_DEPLOY_REQUEST_TIMEOUT_SECONDS`) - timeout for the initial deployment request (5 seconds)
+ * `jvmOverhead` (env `JVM_OVERHEAD`) - number of MBs that the container needs on top of JVM app memory (default is 200 MB)
+ * `forceDeployment` (env `FORCE_DEPLOYMENT`) - url to your Marathon instance
+ * `pathToJsonFile` - Gradle project relative path to your json file (default is `deploy/marathon.json`)
 
 Tasks
 =====
