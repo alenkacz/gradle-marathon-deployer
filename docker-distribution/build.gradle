@@ -1,0 +1,22 @@
+import groovy.time.TimeDuration
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "cz.alenkacz.gradle:gradle-marathon-deployer:${project.property('pluginVersion')}"
+    }
+}
+
+apply plugin: 'marathon-deploy'
+
+marathon {
+    url = System.getenv('MARATHON_URL')
+    dockerImageName = System.getenv('DOCKER_IMAGE_NAME')
+    pathToJsonFile = 'marathon.json'
+    if (System.getenv().containsKey('MARATHON_DEPLOY_TIMEOUT_SECONDS')) verificationTimeout = new TimeDuration(0, 0, System.getenv('MARATHON_DEPLOY_TIMEOUT_SECONDS').toInteger(), 0)
+    if (System.getenv().containsKey('MARATHON_DEPLOY_REQUEST_TIMEOUT_SECONDS')) deploymentRequestTimeout = new TimeDuration(0, 0, System.getenv('MARATHON_DEPLOY_REQUEST_TIMEOUT_SECONDS').toInteger(), 0)
+    if (System.getenv().containsKey('FORCE_DEPLOYMENT')) forceDeployment = System.getenv('FORCE_DEPLOYMENT').toBoolean()
+    if (System.getenv().containsKey('JVM_OVERHEAD')) jvmOverhead = System.getenv('JVM_OVERHEAD').toInteger()
+}

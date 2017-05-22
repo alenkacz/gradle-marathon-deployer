@@ -45,7 +45,7 @@ services:
       - MESOS_RESOURCES=cpus:4;mem:1280;disk:25600;ports(*):[12000-12999]
 
   marathon:
-    image: mesosphere/marathon:latest
+    image: mesosphere/marathon:v1.3.6
     ports:
       - "8080:8080"
     links:

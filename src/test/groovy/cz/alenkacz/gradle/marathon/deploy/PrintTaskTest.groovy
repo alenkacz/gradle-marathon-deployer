@@ -38,16 +38,15 @@ class PrintTaskTest extends Specification {
                 .build()
 
         then:
-        actual.output.contains("""{
-    "container": {
+        actual.output.contains(""""container": {
         "docker": {
             "image": "imagename"
         }
-    },
-    "cpus": 1,
-    "id": "testcontainer",
-    "instances": 1,
-    "mem": 128
-}""")
+    }""")
+        actual.output.contains(""""cpus": 1""")
+        actual.output.contains(""""id": "testcontainer""")
+        actual.output.contains(""""instances": 1""")
+        actual.output.contains(""""cpus": 1""")
+        actual.output.contains(""""mem": 128""")
     }
 }
