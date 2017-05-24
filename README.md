@@ -28,7 +28,7 @@ Usage
     }
 ```
 
-Also [alenkacz/marathon-deployer](https://hub.docker.com/r/alenkacz/marathon-deployer/) Docker image is available. See [documentation](docker-distrbution/README.md).
+Also [alenkacz/marathon-deployer](https://hub.docker.com/r/alenkacz/marathon-deployer/) Docker image is available. See [documentation](docker-distribution/README.md).
 
 Properties
 ==========
