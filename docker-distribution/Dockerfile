@@ -9,5 +9,5 @@ ARG PLUGIN_VERSION
 ENV PLUGIN_VERSION=$PLUGIN_VERSION
 # to cache all the required stuff so it's not downloaded when container starts
 RUN gradle -PpluginVersion=$PLUGIN_VERSION tasks
-ENTRYPOINT gradle -PpluginVersion=$PLUGIN_VERSION deployToMarathon
+ENTRYPOINT gradle --no-daemon -PpluginVersion=$PLUGIN_VERSION deployToMarathon
 CMD []
