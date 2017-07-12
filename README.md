@@ -11,21 +11,21 @@ If you want to deploy your application using canary deployments, *deployCanaryTo
 Usage
 ====================
 ```groovy
-	buildscript {
-		repositories {
-			jcenter()
-		}
-		dependencies {
-			classpath 'cz.alenkacz.gradle:gradle-marathon-deployer:1.2.3'
-		}
+buildscript {
+	repositories {
+		jcenter()
 	}
+	dependencies {
+		classpath 'cz.alenkacz.gradle:gradle-marathon-deployer:1.2.3'
+	}
+}
 
-	apply plugin: 'marathon-deploy'
+apply plugin: 'marathon-deploy'
 
-    marathon {
-	    url = 'http://path-to-your-marathon-instance.com'
-	    dockerImageName = 'yourorg/app:1.0.0'
-    }
+marathon {
+    url = 'http://path-to-your-marathon-instance.com'
+    dockerImageName = 'yourorg/app:1.0.0'
+}
 ```
 
 Also [alenkacz/marathon-deployer](https://hub.docker.com/r/alenkacz/marathon-deployer/) Docker image is available. See [documentation](docker-distribution/README.md).
@@ -57,12 +57,13 @@ JVM memory
 Running JVM apps in containers can be sometimes painful because of its extensive memory demand. To make it easier for JVM developers, marathon json can be enriched by property *jvmMem* that will contain number of megabytes your JVM app needs. Memory of the whole container will then be altered to reflect the constant overhead of the JVM itself so that your container does not go out of memory.
 
 If you want to start using this feature, just add a jvmMem property on the top level of your marathon json as in the following example:
-
-	{
-        "id": "/product/service/myApp",
-        "jvmMem": 256
-        ... other marathon json properties
-    }
+```
+{
+	"id": "/product/service/myApp",
+	"jvmMem": 256
+	... other marathon json properties
+}
+```
 
 For this to work, when starting your JVM app, it must pass JAVA_OPTS environment variable to the JVM. JAVA_OPTS is handled automatically for you if you use [distribution plugin](https://docs.gradle.org/current/userguide/distribution_plugin.html).
 
